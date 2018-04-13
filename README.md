@@ -25,11 +25,11 @@ pip install dominate
 ```
 - Clone this repo:
 ```bash
-git clone https://github.com/xinario/catheter_detect
-cd catheter_detect
+git clone https://github.com/xinario/catheter_detection
+cd catheter_detection
 ```
 
-- Download the pretrained detection model from [here](https://1drv.ms/u/s!Aj4IQl4ug0_9gj4TTqVW1JhhHG5f) (21M) and put it into the "checkpoints/catheter_detect" folder
+- Download the pretrained detection model from [here](https://1drv.ms/u/s!Aj4IQl4ug0_9hEsFwabtgd4bGgFp) (21M) and put it into the "checkpoints/catheter_detect" folder
 
 - Run the test script
 ```bash

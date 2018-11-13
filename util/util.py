@@ -13,7 +13,7 @@ from collections import OrderedDict
 # |imtype|: the desired type of the converted numpy array
 def tensor2im(image_tensor, imtype=np.uint8):
 	# CHW
-	image_numpy = image_tensor[0].cpu().float().numpy()
+	image_numpy = image_tensor[0].cpu().float().detach().numpy()
 	image_numpy = (np.transpose(image_numpy, (1, 2, 0)) + 1) / 2.0 * 255.0
 	return image_numpy.astype(imtype)
 
@@ -21,7 +21,7 @@ def tensor2im(image_tensor, imtype=np.uint8):
 def tensor2im_segmap(image_tensor, imtype=np.uint8):
 	# CHW
 	#for fcn
-	image_numpy = image_tensor[0].cpu().float().numpy()
+	image_numpy = image_tensor[0].cpu().float().detach().numpy()
 	if image_numpy.shape[0] == 1:
 		image_numpy = decode_segmap_color(image_numpy)
 		image_numpy = np.transpose(image_numpy, (1, 2, 0))
@@ -108,7 +108,11 @@ def cross_entropy2d(input, target, weight=None, size_average=True):
 	loss = F.nll_loss(log_p, target, ignore_index=250,
 					  weight=weight, size_average=False)
 	if size_average:
-		loss /= mask.data.sum()
+		# a = mask.sum()
+		# print(a)
+		# print(a.type())
+		# print(loss.type())
+		loss /= mask.sum().float()
 	return loss
 
 

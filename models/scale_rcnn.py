@@ -141,24 +141,24 @@ class SRCNN(BaseModel):
         self.optimizer_G.step()
 
     def get_current_errors(self):
-        return OrderedDict([('G_scale0', self.loss_G_scale0.data[0]),
-                            ('G_scale1', self.loss_G_scale1.data[0]),
-                            ('G_scale2', self.loss_G_scale2.data[0]),
+        return OrderedDict([('G_scale0', self.loss_G_scale0.item()),
+                            ('G_scale1', self.loss_G_scale1.item()),
+                            ('G_scale2', self.loss_G_scale2.item()),
                             ])
 
     def get_current_visuals(self):
-        real_A0 = util.tensor2im(self.real_A0.data)
-        real_A1 = util.tensor2im(self.real_A1.data)
-        real_A2 = util.tensor2im(self.real_A2.data)
+        real_A0 = util.tensor2im(self.real_A0)
+        real_A1 = util.tensor2im(self.real_A1)
+        real_A2 = util.tensor2im(self.real_A2)
 
         # original
-        fake_B0 = util.tensor2im_segmap(F.softmax(self.fake_B0, dim=1).data[:,[0,1,2],:,:])
-        fake_B1 = util.tensor2im_segmap(F.softmax(self.fake_B1, dim=1).data[:,[0,1,2],:,:])
-        fake_B2 = util.tensor2im_segmap(F.softmax(self.fake_B2, dim=1).data[:,[0,1,2],:,:])
+        fake_B0 = util.tensor2im_segmap(F.softmax(self.fake_B0, dim=1)[:,[0,1,2],:,:])
+        fake_B1 = util.tensor2im_segmap(F.softmax(self.fake_B1, dim=1)[:,[0,1,2],:,:])
+        fake_B2 = util.tensor2im_segmap(F.softmax(self.fake_B2, dim=1)[:,[0,1,2],:,:])
 
-        real_B0 = util.tensor2im(self.one2multimap(self.real_B0).data[:,[0,1,2],:,:])
-        real_B1 = util.tensor2im(self.one2multimap(self.real_B1).data[:,[0,1,2],:,:])
-        real_B2 = util.tensor2im(self.one2multimap(self.real_B2).data[:,[0,1,2],:,:])
+        real_B0 = util.tensor2im(self.one2multimap(self.real_B0)[:,[0,1,2],:,:])
+        real_B1 = util.tensor2im(self.one2multimap(self.real_B1)[:,[0,1,2],:,:])
+        real_B2 = util.tensor2im(self.one2multimap(self.real_B2)[:,[0,1,2],:,:])
 
         return OrderedDict([('real_A0', real_A0), ('real_A1', real_A1), ('real_A2', real_A2), ('fake_B0', fake_B0), ('fake_B1', fake_B1), ('fake_B2', fake_B2), ('real_B0', real_B0), ('real_B1', real_B1), ('real_B2', real_B2)])
 
@@ -166,7 +166,7 @@ class SRCNN(BaseModel):
         self.save_network(self.netG, 'G', label, self.gpu_ids)
 
     def multimap2one(self, map):
-        map = map.data.cpu().numpy()
+        map = map.cpu().numpy()
         #0, 1,...c
         map = np.argmax(map, axis=1).astype(np.float32)
         #normalize to -1, 1
@@ -177,7 +177,7 @@ class SRCNN(BaseModel):
 
     def one2multimap(self, map):
         map = map.squeeze(dim=1)
-        map = map.data.cpu().numpy()
+        map = map.cpu().numpy()
         map = np.round((map+1)*0.5*255)
         map = map.astype(np.int32)
         output_map = []

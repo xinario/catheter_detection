@@ -8,7 +8,7 @@ Note that due to regulations on the patient data, we can not share the test data
 - Linux
 - Python 3.6
 - NVIDIA GPU + CUDA CuDNN
-- PyTorch v0.3
+- PyTorch v0.41
 
 ## Getting Started
 ### Installation
@@ -27,6 +27,8 @@ cd catheter_detection
 - Download the synthetic x-rays from [here](https://1drv.ms/u/s!Aj4IQl4ug0_9hUSPHFV7SKa3ZJaX) (143M) and put the extracted folder into "./datasets/" folder. Note that this dataset has slightly more images than described in the paper, but won't affect too much about the result.
 
 - Download the pretrained detection model from [here](https://1drv.ms/u/s!Aj4IQl4ug0_9hEsFwabtgd4bGgFp) (21M) and put it into the "./checkpoints/catheter_detect" folder
+
+- Run python -m visdom.server and click the URL http://localhost:8097 to view the whole training statistics
 
 - Run the test script
 ```bash

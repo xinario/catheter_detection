@@ -80,9 +80,9 @@ class SRCNN(BaseModel):
         self.image_paths = input['A_paths']
 
     def forward(self):
-        self.real_A0 = Variable(self.input_A0)
-        self.real_A1 = Variable(self.input_A1)
-        self.real_A2 = Variable(self.input_A2)
+        self.real_A0 = self.input_A0
+        self.real_A1 = self.input_A1
+        self.real_A2 = self.input_A2
 
         input_list = [self.real_A0, self.real_A1, self.real_A2]
 
@@ -93,27 +93,28 @@ class SRCNN(BaseModel):
         self.fake_B2 = output_list[2]
 
 
-        self.real_B0 = Variable(self.input_B0)
-        self.real_B1 = Variable(self.input_B1)
-        self.real_B2 = Variable(self.input_B2)
+        self.real_B0 = self.input_B0
+        self.real_B1 = self.input_B1
+        self.real_B2 = self.input_B2
     # no backprop gradients
     def test(self):
-        self.real_A0 = Variable(self.input_A0, volatile=True)
-        self.real_A1 = Variable(self.input_A1, volatile=True)
-        self.real_A2 = Variable(self.input_A2, volatile=True)
+        with torch.no_grad():
+            self.real_A0 = self.input_A0
+            self.real_A1 = self.input_A1
+            self.real_A2 = self.input_A2
 
-        input_list = [self.real_A0, self.real_A1, self.real_A2]
+            input_list = [self.real_A0, self.real_A1, self.real_A2]
 
-        output_list = self.netG(input_list)
+            output_list = self.netG(input_list)
 
-        self.fake_B0 = output_list[0]
-        self.fake_B1 = output_list[1]
-        self.fake_B2 = output_list[2]
+            self.fake_B0 = output_list[0]
+            self.fake_B1 = output_list[1]
+            self.fake_B2 = output_list[2]
 
 
-        self.real_B0 = Variable(self.input_B0, volatile=True)
-        self.real_B1 = Variable(self.input_B1, volatile=True)
-        self.real_B2 = Variable(self.input_B2, volatile=True)
+            self.real_B0 = self.input_B0
+            self.real_B1 = self.input_B1
+            self.real_B2 = self.input_B2
     # get image paths
     def get_image_paths(self):
         return self.image_paths

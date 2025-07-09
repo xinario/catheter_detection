@@ -5,7 +5,8 @@ from data.data_loader import CreateDataLoader
 from util.visualizer import Visualizer
 from util import html
 from models.scale_rcnn import SRCNN
-
+import ntpath
+from util import util
 
 opt = TestOptions().parse()
 opt.nThreads = 1   # test code only supports nThreads = 1
@@ -17,7 +18,7 @@ data_loader = CreateDataLoader(opt)
 dataset = data_loader.load_data()
 model = SRCNN()
 model.initialize(opt)
-visualizer = Visualizer(opt)
+# visualizer = Visualizer(opt)
 # create website
 web_dir = os.path.join(opt.results_dir, opt.name, '%s_%s' % (opt.phase, opt.which_epoch))
 webpage = html.HTML(web_dir, 'Experiment = %s, Phase = %s, Epoch = %s' % (opt.name, opt.phase, opt.which_epoch))
@@ -31,9 +32,16 @@ for i, data in enumerate(dataset):
     visuals = model.get_current_visuals()
     img_path = model.get_image_paths()
     print('%04d: process image... %s' % (i, img_path))
-    if opt.sourceoftest == 'internal':
-        visualizer.save_images(webpage, visuals, img_path)
-    elif opt.sourceoftest == 'external':
-        visualizer.save_images_nogt(webpage, visuals, img_path)
+    image_dir = "./"
+    short_path = ntpath.basename(img_path[0])
+    name = os.path.splitext(short_path)[0]
+    for label, image_numpy in visuals.items():
+        image_name = '%s_%s.png' % (name, label)
+        save_path = os.path.join(image_dir, image_name)
+        util.save_image(image_numpy, save_path)
+    # if opt.sourceoftest == 'internal':
+    #     visualizer.save_images(webpage, visuals, img_path)
+    # elif opt.sourceoftest == 'external':
+    #     visualizer.save_images_nogt(webpage, visuals, img_path)
 
 webpage.save()

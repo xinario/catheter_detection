@@ -183,7 +183,7 @@ class ResnetBlock(nn.Module):
 
 class CLSTMCell(nn.Module):
 
-	def __init__(self, input_dim, hidden_dim, kernel_size, bias):
+	def __init__(self, input_dim, hidden_dim, kernel_size, bias, use_gpu=True):
 		"""
 		Initialize ConvLSTM cell.
 		
@@ -215,6 +215,8 @@ class CLSTMCell(nn.Module):
 							  kernel_size=self.kernel_size,
 							  padding=self.padding,
 							  bias=self.bias)
+  
+		self.use_gpu = use_gpu
 
 	def forward(self, input_tensor, cur_state):
 		
@@ -235,8 +237,12 @@ class CLSTMCell(nn.Module):
 		return h_next, c_next
 
 	def init_hidden(self, batch_size, spatial_size):
-		return (Variable(torch.zeros(batch_size, self.hidden_dim, spatial_size[0], spatial_size[1])).cuda(),
-				Variable(torch.zeros(batch_size, self.hidden_dim, spatial_size[0], spatial_size[1])).cuda())
+		if self.use_gpu:
+			return (Variable(torch.zeros(batch_size, self.hidden_dim, spatial_size[0], spatial_size[1])).cuda(),
+					Variable(torch.zeros(batch_size, self.hidden_dim, spatial_size[0], spatial_size[1])).cuda())
+		else:
+			return (Variable(torch.zeros(batch_size, self.hidden_dim, spatial_size[0], spatial_size[1])),
+					Variable(torch.zeros(batch_size, self.hidden_dim, spatial_size[0], spatial_size[1])))
 
 
 
@@ -249,6 +255,7 @@ class SRCNN(nn.Module):
 		self.output_nc = output_nc
 		self.ngf = ngf
 		self.gpu_ids = gpu_ids
+		self.use_gpu = len(gpu_ids) > 0
 		self.nclass = output_nc
 		if type(norm_layer) == functools.partial:
 			use_bias = norm_layer.func == nn.InstanceNorm2d
@@ -280,7 +287,8 @@ class SRCNN(nn.Module):
 		self.conv_lstm = CLSTMCell(input_dim=4*ngf,
 									  hidden_dim=4*ngf,
 									  kernel_size=(3,3),
-									  bias=use_bias
+									  bias=use_bias,
+									  use_gpu=self.use_gpu
 									  )
 
 		#64x64x256
@@ -316,7 +324,10 @@ class SRCNN(nn.Module):
 		
 		output = []
 
-		I = Variable(torch.zeros(batch_size, self.nclass, int(hh/4), int(ww/4))).cuda()
+		if self.use_gpu:
+			I = Variable(torch.zeros(batch_size, self.nclass, int(hh/4), int(ww/4))).cuda()
+		else:
+			I = Variable(torch.zeros(batch_size, self.nclass, int(hh/4), int(ww/4)))
 		#input list small-mid-large
 		for t in range(seq_len):
 			# print(I.data.cpu().size())

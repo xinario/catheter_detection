@@ -20,8 +20,8 @@ class AlignedDatasetSRCNN(BaseDataset):
 		self.B_paths = sorted(make_dataset(self.dir_B))
 
 
-		self.transform = get_transform(opt)
-
+		self.t_img   = get_transform(opt, for_label=False)
+		self.t_label = get_transform(opt, for_label=True)
 	def __getitem__(self, index):
 		A_path = self.A_paths[index]
 		B_path = self.B_paths[index]
@@ -118,12 +118,12 @@ class AlignedDatasetSRCNN(BaseDataset):
 		A2 = A2.resize((w_scale2, h_scale2), Image.BICUBIC)
 		B2 = B2.resize((w_scale2, h_scale2), Image.NEAREST)	
 
-		A0 = self.transform(A0)
-		B0 = self.transform(B0)		
-		A1 = self.transform(A1)
-		B1 = self.transform(B1)	
-		A2 = self.transform(A2)
-		B2 = self.transform(B2)	
+		A0 = self.t_img(A0)
+		B0 = self.t_label(B0)		
+		A1 = self.t_img(A1)
+		B1 = self.t_label(B1)	
+		A2 = self.t_img(A2)
+		B2 = self.t_label(B2)	
 
 		# print(A0.size())
 		# print(A1.size())

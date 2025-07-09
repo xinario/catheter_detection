@@ -5,10 +5,10 @@ Note that due to regulations on the patient data, we can not share the test data
 <img src="sample.png" width="900px"/>
 
 ## Prerequistites
-- Linux
-- Python 3.6
-- NVIDIA GPU + CUDA CuDNN
-- PyTorch v0.41
+- Linux/Mac
+- Python 3.12
+- NVIDIA GPU + CUDA CuDNN (not needed)
+- PyTorch v2.7.1
 
 ## Getting Started
 ### Installation
@@ -16,7 +16,7 @@ Note that due to regulations on the patient data, we can not share the test data
 
 - Install python libraries [visdom](https://github.com/facebookresearch/visdom) and [dominate](https://github.com/Knio/dominate).
 ```bash
-pip install visdom
+pip install visdom (too old, need replace with something new)
 pip install dominate
 ```
 - Clone this repo:
@@ -27,8 +27,6 @@ cd catheter_detection
 - Download the synthetic x-rays from [here](https://1drv.ms/u/s!Aj4IQl4ug0_9hUSPHFV7SKa3ZJaX) (143M) and put the extracted folder into "./datasets/" folder. Note that this dataset has slightly more images than described in the paper, but won't affect too much about the result.
 
 - Download the pretrained detection model from [here](https://1drv.ms/u/s!Aj4IQl4ug0_9hEsFwabtgd4bGgFp) (21M) and put it into the "./checkpoints/catheter_detect" folder
-
-- Run python -m visdom.server and click the URL http://localhost:8097 to view the whole training statistics
 
 - Run the test script
 ```bash

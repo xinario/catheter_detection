@@ -189,5 +189,6 @@ class SRCNN(BaseModel):
         out = np.stack(output_map, 1).astype(np.float32)
         out = 2*out-1
 
-        out = Variable(torch.Tensor(out).cuda())
+
+        out = Variable(torch.Tensor(out))
         return out

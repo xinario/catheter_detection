@@ -7,11 +7,8 @@ import ntpath
 from util import util
 from PIL import Image
 import io
-from data.preprocess import get_preprocessing_transforms
+from data.preprocess import preprocess_single_image
 
-
-fine_size = 512  # or whatever your fineSize was during training
-transform = get_preprocessing_transforms(fine_size)
 
 def segment_xray(image_bytes):
     """
@@ -28,24 +25,17 @@ def segment_xray(image_bytes):
     opt.serial_batches = True  # no shuffle
     opt.no_flip = True  # no flip
 
-    data_loader = CreateDataLoader(opt)
-    dataset = data_loader.load_data()
     model = SRCNN()
     model.initialize(opt)
 
-    for i, data in enumerate(dataset):
-        if i >= opt.how_many:
-            break
-        model.set_input(data)
-        model.test()
-        visuals = model.get_current_visuals()
-        img_path = model.get_image_paths()
-        print('%04d: process image... %s' % (i, img_path))
-        image_dir = "./"
-        short_path = ntpath.basename(img_path[0])
-        name = os.path.splitext(short_path)[0]
-        for label, image_numpy in visuals.items():
-            image_name = '%s_%s.png' % (name, label)
-            save_path = os.path.join(image_dir, image_name)
-            util.save_image(image_numpy, save_path)
+    tensors = preprocess_single_image(image, fine_size=480)
 
+    model.set_input(tensors)
+    model.test()
+    visuals = model.get_current_visuals(need_GT=False)
+    for label, image_numpy in visuals.items():
+        print(image_numpy.shape)
+        util.save_image(image_numpy, f"./test_output_{label}.png")
+
+
+segment_xray(open("/Users/xin/Documents/past_research/test8.jpg", "rb").read())

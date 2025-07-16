@@ -146,7 +146,7 @@ class SRCNN(BaseModel):
                             ('G_scale2', self.loss_G_scale2.item()),
                             ])
 
-    def get_current_visuals(self):
+    def get_current_visuals(self, need_GT=True):
         real_A0 = util.tensor2im(self.real_A0)
         real_A1 = util.tensor2im(self.real_A1)
         real_A2 = util.tensor2im(self.real_A2)
@@ -156,12 +156,14 @@ class SRCNN(BaseModel):
         fake_B1 = util.tensor2im_segmap(F.softmax(self.fake_B1, dim=1)[:,[0,1,2],:,:])
         fake_B2 = util.tensor2im_segmap(F.softmax(self.fake_B2, dim=1)[:,[0,1,2],:,:])
 
-        real_B0 = util.tensor2im(self.one2multimap(self.real_B0)[:,[0,1,2],:,:])
-        real_B1 = util.tensor2im(self.one2multimap(self.real_B1)[:,[0,1,2],:,:])
-        real_B2 = util.tensor2im(self.one2multimap(self.real_B2)[:,[0,1,2],:,:])
+        if need_GT:
+            real_B0 = util.tensor2im(self.one2multimap(self.real_B0)[:,[0,1,2],:,:])
+            real_B1 = util.tensor2im(self.one2multimap(self.real_B1)[:,[0,1,2],:,:])
+            real_B2 = util.tensor2im(self.one2multimap(self.real_B2)[:,[0,1,2],:,:])
 
-        return OrderedDict([('real_A0', real_A0), ('real_A1', real_A1), ('real_A2', real_A2), ('fake_B0', fake_B0), ('fake_B1', fake_B1), ('fake_B2', fake_B2), ('real_B0', real_B0), ('real_B1', real_B1), ('real_B2', real_B2)])
-
+            return OrderedDict([('real_A0', real_A0), ('real_A1', real_A1), ('real_A2', real_A2), ('fake_B0', fake_B0), ('fake_B1', fake_B1), ('fake_B2', fake_B2), ('real_B0', real_B0), ('real_B1', real_B1), ('real_B2', real_B2)])
+        else:
+            return OrderedDict([('real_A0', real_A0), ('real_A1', real_A1), ('real_A2', real_A2), ('fake_B0', fake_B0), ('fake_B1', fake_B1), ('fake_B2', fake_B2)])
     def save(self, label):
         self.save_network(self.netG, 'G', label, self.gpu_ids)
 

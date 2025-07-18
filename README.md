@@ -15,10 +15,7 @@ Note that due to regulations on the patient data, we can not share the test data
 - Install PyTorch and dependencies from http://pytorch.org
 
 - Install python libraries [visdom](https://github.com/facebookresearch/visdom) and [dominate](https://github.com/Knio/dominate).
-```bash
-pip install visdom (too old, need replace with something new)
-pip install dominate
-```
+
 - Clone this repo:
 ```bash
 git clone https://github.com/xinario/catheter_detection
@@ -31,6 +28,21 @@ cd catheter_detection
 - Run the test script
 ```bash
 python test.py --dataroot ./datasets/pediatric_internet/ --name catheter_detect  --phase test  --loadSize 480 --sourceoftest external
+```
+
+- Build the docker container
+```
+docker build -t catheter_detection_image .
+```
+
+- Start the inference server
+```
+docker run -d -p 8001:8001 --name fastapi-container my-fastapi-app
+```
+
+- Start inference locally
+```
+http://localhost:8001/docs
 ```
 
 Now you can view the result by open the html file: results/catheter_detect/test_latest/index.html

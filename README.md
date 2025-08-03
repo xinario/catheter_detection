@@ -30,6 +30,11 @@ cd catheter_detection
 python test.py --dataroot ./datasets/pediatric_internet/ --name catheter_detect  --phase test  --loadSize 480 --sourceoftest external
 ```
 
+- Local test of fastapi
+```bash
+uvicorn main:app --reload --port 8001
+```
+
 - Build the docker container
 ```
 docker build -t catheter_detection_image .
